@@ -12,10 +12,12 @@ import NavTray from '/core/ui/navigation-tray/model-navigation-tray.js';
 import Panel from '/core/ui/panel-support.js';
 import ViewManager from '/core/ui/views/view-manager.js';
 import { Focus } from '/core/ui/input/focus-support.js';
+import LensManager from '/core/ui/lenses/lens-manager.js';
 class TradeRouteChooser extends Panel {
     static get activeChooser() {
         return this._activeChooser;
     }
+	
     constructor(root) {
         super(root);
         this.isModern = Game.age == Database.makeHash("AGE_MODERN");
@@ -29,18 +31,17 @@ class TradeRouteChooser extends Panel {
             .getProjectedTradeRoutes()
             .map(route => ({ route: route, element: this.createTradeRouteChooserItem(route) }));
         const fragment = document.createDocumentFragment();
-        const frame = document.createElement("fxs-subsystem-frame");
-        frame.setAttribute("no-close", "true");
-        fragment.appendChild(frame);
+		this.frame = document.createElement("fxs-subsystem-frame");
+        fragment.appendChild(this.frame);
         const title = document.createElement("fxs-header");
         title.setAttribute("data-slot", "header");
         title.setAttribute("title", this.isModern ? "LOC_TRADE_LENS_TITLE_ALT" : "LOC_TRADE_LENS_TITLE");
-        frame.appendChild(title);
+        this.frame.appendChild(title);
         const description = document.createElement("div");
         description.classList.add("text-center", "mx-3\\.5", "font-body-sm");
         description.setAttribute("data-slot", "header");
         description.innerHTML = this.isModern ? Locale.compose("LOC_TRADE_LENS_DESCRIPTION_ALT") : Locale.compose("LOC_TRADE_LENS_DESCRIPTION");
-        frame.appendChild(description);
+        this.frame.appendChild(description);
         const sortOptions = [{ label: "LOC_TRADE_LENS_SORT_DEFAULT" }, { label: "LOC_TRADE_LENS_SORT_BY_LEADER" }];
         this.sortOrder.classList.add("m-4", "font-body-lg");
         this.sortOrder.setAttribute("enable-shell-nav", "true");
@@ -52,9 +53,9 @@ class TradeRouteChooser extends Panel {
             this.applySort();
         });
         this.sortOrder.setAttribute("data-audio-focus-ref", "none");
-        frame.appendChild(this.sortOrder);
+        this.frame.appendChild(this.sortOrder);
         this.routesListEl.setAttribute("disable-focus-allowed", "true");
-        frame.appendChild(this.routesListEl);
+        this.frame.appendChild(this.routesListEl);
         if (this.isModern) {
             this.confirmButton = document.createElement("fxs-hero-button");
             this.confirmButton.classList.add("mx-7", "my-5");
@@ -62,8 +63,11 @@ class TradeRouteChooser extends Panel {
             this.confirmButton.setAttribute("caption", "LOC_TRADE_LENS_CONFIRM_ROUTE");
             this.confirmButton.setAttribute("disabled", "true");
             this.confirmButton.addEventListener("action-activate", () => this.checkAndStartTradeRoute());
-            frame.appendChild(this.confirmButton);
+            this.frame.appendChild(this.confirmButton);
         }
+		this.requestClose = () => {
+            this.toggleClose(true);
+        };
         this.updateInputDeviceType();
         this.Root.appendChild(fragment);
     }
@@ -75,6 +79,7 @@ class TradeRouteChooser extends Panel {
         this.Root.addEventListener('navigate-input', this.navigateInputListener);
         this.Root.addEventListener('engine-input', this.engineInputListener);
         window.addEventListener(ActiveDeviceTypeChangedEventName, this.activeDeviceTypeListener, true);
+		this.frame.addEventListener("subsystem-frame-close", this.requestClose);
         TradeRouteChooser._activeChooser = this;
         Focus.setContextAwareFocus(this.routesListEl, this.Root);
     }
@@ -86,7 +91,18 @@ class TradeRouteChooser extends Panel {
         this.Root.removeEventListener('navigate-input', this.navigateInputListener);
         this.Root.removeEventListener('engine-input', this.engineInputListener);
         window.removeEventListener(ActiveDeviceTypeChangedEventName, this.activeDeviceTypeListener, true);
+		this.frame.removeEventListener("subsystem-frame-close", this.requestClose);
     }
+	
+	toggleClose(force) {
+		const hidden = force ?? !this.Root.classList.contains("hidden");
+		this.Root.classList.toggle("hidden", hidden);
+		if (hidden) {
+			LensManager.setActiveLens('fxs-default-lens');  
+			ContextManager.pop("trade-route-chooser");
+			ViewManager.handleReceiveFocus();
+		}
+	}
     onReceiveFocus() {
         super.onReceiveFocus();
         Focus.setContextAwareFocus(this.routesListEl, this.Root);

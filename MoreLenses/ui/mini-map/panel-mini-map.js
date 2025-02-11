@@ -278,7 +278,8 @@ export class PanelMiniMap extends Panel {
         // this.createLayerButton("LOC_UI_MINI_MAP_GOVERNMENT", "", "lens-group");
         // this.createLayerButton("LOC_UI_MINI_MAP_POLITICAL", "", "lens-group");
         // this.createLayerButton("LOC_UI_MINI_MAP_EMPIRE", "", "lens-group");
-        // this.createLayerButton("LOC_UI_MINI_MAP_TRADE", "", "lens-group");
+        // this.createLayerButton("LOC_UI_MINI_MAP_TRADE", "fxs-trade-lens", "lens-group");
+		this.createLensButton("LOC_UI_MINI_MAP_TRADE", "fxs-trade-lens", "lens-group");
         this.createLayerCheckbox("LOC_UI_MINI_MAP_HEX_GRID", "fxs-hexgrid-layer");
         this.createLayerCheckbox("LOC_UI_MINI_MAP_RESOURCE", "fxs-resource-layer");
         this.createLayerCheckbox("LOC_UI_MINI_MAP_YIELDS", "fxs-yields-layer");
