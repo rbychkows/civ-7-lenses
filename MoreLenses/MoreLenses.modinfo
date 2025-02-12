@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Mod id="blos_ross_more_lenses" version="1"
+<Mod id="blos_ross_more_lenses" version="0.1.0"
 	xmlns="ModInfo">
 	<Properties>
 		<Name>More Lenses</Name>
