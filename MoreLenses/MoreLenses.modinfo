@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Mod id="blos_ross_more_lenses" version="0.1.0"
+<Mod id="blos_ross_more_lenses" version="0.2.0"
 	xmlns="ModInfo">
 	<Properties>
 		<Name>More Lenses</Name>
@@ -18,14 +18,13 @@
 	</ActionCriteria>
 	<ActionGroups>
 		<ActionGroup id="game-more-lens-always" scope="game" criteria="always">
-			<Properties>
-				<LoadOrder>100</LoadOrder>
-			</Properties>
 			<Actions>
 				<ImportFiles>
-					<Item>ui/mini-map/panel-mini-map.js</Item>
 					<Item>ui/trade-route-chooser/trade-route-chooser.js</Item>
 				</ImportFiles>
+				<UIScripts>
+          <Item>ui/utilities/trade-lens-panel-mini-map.js</Item>
+        </UIScripts>
 			</Actions>
 		</ActionGroup>
 	</ActionGroups>
