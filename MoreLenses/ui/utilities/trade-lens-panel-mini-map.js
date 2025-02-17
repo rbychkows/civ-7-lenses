@@ -10,7 +10,7 @@ export class TradeLensPanelMiniMapDecorator {
     }
 
     afterAttach() {
-		    this.miniMap.createLensButton("LOC_UI_MINI_MAP_TRADE", "fxs-trade-lens", "lens-group");
+        this.miniMap.createLensButton("LOC_UI_MINI_MAP_TRADE", "fxs-trade-lens", "lens-group");
     }
 
     beforeDetach() { }
